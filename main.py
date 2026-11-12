@@ -19,7 +19,7 @@ data_supply = grid_data_pull.data_supply.get_data()
 ### (Geometry)
 ### (material)
 ### volume
-### output: Strategy (BMS), decision via node like decision tree 
+### output: decision via node like decision tree 
 ### determination of goal: Eneryg Consumption (Carbonized Cost)
 
 ## Data Analysis and Visualization of the results.
