@@ -23,3 +23,6 @@ data_supply = grid_data_pull.data_supply.get_data()
 ### determination of goal: Eneryg Consumption (Carbonized Cost)
 
 ## Data Analysis and Visualization of the results.
+
+
+"""Phase-change material simulation package."""
