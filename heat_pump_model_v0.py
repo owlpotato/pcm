@@ -1,5 +1,4 @@
 """
-
 Equations:
     Q_water = m_water * c_water * (Tw2 - Tw1)     
     Q_evap  = m_air   * c_air   * (Ta1 - Ta2)     
@@ -18,12 +17,12 @@ C_AIR = 1.006     # kJ/(kg K)
 @dataclass
 class HeatPump:
     # ---- change these to simulate a different heat pump ----------------
-    q_max: float = 5.0         # max heat output                       [kW]
+    q_max: float = 4.95         # max heat output                       [kW]
     eta_carnot: float = 0.50   # share of the ideal Carnot COP reached  [-]
     pinch_evap: float = 5.0    # refrigerant is this much colder than Ta2 [K]
     pinch_cond: float = 5.0    # refrigerant is this much hotter than Tw2 [K]
 
-    def run(self, Ta1, Ta2, Tw1, Tw2, m_air, m_water, power_from_PV=0.0):
+    def run(self, Ta1, Ta2, Tw1, Tw2, m_air=0.732, m_water=0.219, power_from_PV=0.0): #data from datasheet: vwl 75/6 a 230v s2
         """
         Ta1, Ta2 : air temperature in / out of the evaporator   [degC]
         Tw1, Tw2 : water temperature in / out of the condenser  [degC]
@@ -66,13 +65,8 @@ class HeatPump:
 if __name__ == "__main__":
     hp = HeatPump()
 
-    # normal case: the water loop is what limits
-    r = hp.run(Ta1=5, Ta2=2, Tw1=30, Tw2=35, m_air=1.0, m_water=0.19,
-               power_from_PV=0.8)
-    print(f"Q_cond = {r['Q_cond']:.2f} kW (limited by {r['limiting_factor']}), "
-          f"COP = {r['COP']:.2f}, P_el = {r['P_el']:.2f} kW")
-
-    # too little airflow: the air side limits
-    r = hp.run(Ta1=5, Ta2=2, Tw1=30, Tw2=35, m_air=0.5, m_water=0.19)
-    print(f"Q_cond = {r['Q_cond']:.2f} kW (limited by {r['limiting_factor']}), "
-          f"COP = {r['COP']:.2f}, P_el = {r['P_el']:.2f} kW")
+    # test case
+    r = hp.run(Ta1=5, Ta2=2, Tw1=30, Tw2=35, power_from_PV=0.8)
+    print(f"Qcond = {r['Q_cond']:.2f} kW (limited by {r['limiting_factor']}), Qevap = {r['Q_evap']:.2f} kW, "
+          f"COP = {r['COP']:.2f}, Pel = {r['P_el']:.2f} kW, Power from grid = {r['power_from_grid']:.2f} kW") 
+          
