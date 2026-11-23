@@ -1,2 +1,2 @@
 # pcm
-Project regarding PSC
+Project regarding PCM
