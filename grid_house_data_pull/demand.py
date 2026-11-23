@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import holidays
 from demandlib import bdew
@@ -7,9 +8,10 @@ ANNUAL_ELEC_KWH = 3500     # household electricity per year
 ANNUAL_HEAT_KWH = 15000    # space heat + hot water per year
 HOUSE_TYPE = "EFH"         # EFH = single-family, MFH = multi-family
 START, END = "2025-11-07 00:00", "2026-11-07 23:00"
+HERE = Path(__file__).resolve().parent   # folder this script lives in
 
 # ---- air temp from your PV csv, as local wall-clock time ----
-df = pd.read_csv("karlsruhe_pv_hourly.csv", parse_dates=["timestamp_utc"])
+df = pd.read_csv(HERE / "karlsruhe_pv_hourly.csv", parse_dates=["timestamp_utc"])
 temp = df.set_index("timestamp_utc")["temp_air"]
 temp.index = temp.index.tz_convert("Europe/Berlin").tz_localize(None)
 temp = temp[~temp.index.duplicated()]                 # DST autumn: repeated hour
@@ -42,8 +44,7 @@ heat = bdew.HeatBuilding(
 out = pd.DataFrame({"temp_air": temp, "elec_kwh": elec_h, "heat_kwh": heat})
 out.index.name = "timestamp_local"
 out = out.round(4)
-out[["elec_kwh"]].to_csv("elec_demand_hourly.csv")
-out[["temp_air", "heat_kwh"]].to_csv("heat_demand_hourly.csv")
+out[["temp_air", "heat_kwh", "elec_kwh"]].to_csv(HERE / "demand_hourly.csv", date_format="%Y-%m-%dT%H")
 
 print(out.head())
 print(out[["elec_kwh", "heat_kwh"]].sum().round(0))
